@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+           
+            --text-color: #1f2937;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        /* Navigation Styles */
+        .nav {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            color: white;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content Styles */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .title {
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        .purchases-table {
+            width: 100%;
+            border-collapse: separate;
+        
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        .purchases-table tr {
+          
+            border-radius: 8px;
+            
+        }
+
+        .purchases-table th {
+            background-color: transparent;
+            color: #6b7280;
+            font-weight: 500;
+            padding: 0.5rem 1rem; 
+            border-bottom: 1px solid #e5e7eb ;
+            text-align: left;
+            
+        }
+
+        .purchases-table td {
+            padding: 1rem;
+            border: none;
+            font-size: small;
+        }
+
+        .category-badge {
+            background-color: transparent;
+            padding: 0.25rem 0.75rem;
+            border-radius: .5rem;
+            font-size: 0.875rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .product-image {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 1.5rem;
+        }
+
+        .actions-menu {
+            cursor: pointer;
+            padding: 0.5rem;
+            background: white;
+            border: none;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background-color: var(--primary-color);
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .purchases-table,
+            .purchases-table thead {
+                display: none;
+            }
+
+            #purchases-body {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                padding: .5rem;
+            }
+
+            .purchase-card {
+                background: white;
+                border-radius: 12px;
+                padding: 1.5rem;
+                /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                margin-bottom: 0.5rem;
+            }
+
+            .purchase-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 0.75rem;
+            }
+
+            .purchase-title {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .product-image {
+                width: 2rem;
+            height: 2rem;
+            border-radius: 1rem;
+            }
+
+            .purchase-name {
+                font-weight: 500;
+                font-size: .8rem;
+                font-weight: bold;
+            }
+
+            .purchase-price {
+                font-weight: 600;
+                font-size: .8rem;
+            }
+
+            .purchase-description {
+                color: #6b7280;
+                margin-bottom: 1rem;
+                font-size: 0.75rem;
+            }
+
+            .purchase-date-label {
+                font-weight: bold;
+                color: #374151;
+                margin-bottom: 0.25rem;
+                font-size: 0.8rem;
+            }
+
+            .purchase-date {
+                font-size: .8rem;
+                color: #6b7280;
+            }
+        }
+
+        /* Add styles for pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .pagination button {
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .mobile-view {
+            display: none;
+        }
+
+        .desktop-view {
+            display: table;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: .5rem;
+        }
+
+        /* .purchases-table tr {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        } */
+        @media (max-width: 768px) {
+            .mobile-view {
+                display: block;
+            }
+
+            .desktop-view {
+                display: none;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-view {
+                display: none;
+            }
+
+            .desktop-view {
+                display: block;
+            }
+        }
+
+        #search-input {
+            margin: 0.5rem;
+            padding: 0.25rem;
+            border: 1px solid  rgba(0, 0, 0, 0.2);
+            border-radius: 0.4rem;
+        }
+        .tableops{ 
+            display: flex;
+            flex-direction: row-reverse;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-content">
+            <div class="nav-brand">MyStore</div>
+            <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <div class="nav-links" id="nav-links">
+                <a href="#" class="nav-link" aria-current="page">Home</a>
+                <a href="#" class="nav-link">Purchases</a>
+                <a href="#" class="nav-link">Profile</a>
+            </div>
+        </div>
+    </nav>
+    <!---->
+    <main class="container" role="main">
+        <h1 class="title">Purchases</h1>
+        <div class="tableops">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Search purchases..." 
+                aria-label="Search purchases"
+            />
+        </div>
+        <div id="purchases-container">
+            <!-- Mobile Cards View -->
+            <div class="mobile-view" role="region" aria-label="Purchases list">
+                ${paginatedPurchases.map(purchase => `
+                    <article class="purchase-card">
+                        <div class="purchase-header">
+                            <div class="purchase-title">
+                                <img src="${purchase.location}" alt="" class="product-image" role="presentation">
+                                <span class="purchase-name">${purchase.name}</span>
+                            </div>
+                            <div class="purchase-price" aria-label="Price: ${formatPrice(purchase.price)}">${formatPrice(purchase.price)}</div>
+                        </div>
+                        <div class="purchase-description">${purchase.description}</div>
+                        <div class="purchase-date-label">Purchase Date</div>
+                        <div class="purchase-date" aria-label="Purchased on ${formatDate(purchase.purchaseDate)}">${formatDate(purchase.purchaseDate)}</div>
+                    </article>
+                `).join('')}
+            </div>
+
+            <!-- Desktop Table View -->
+            <table class="desktop-view purchases-table" role="table" aria-label="Purchases history">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Purchase Date</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col" aria-label="Actions"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${paginatedPurchases.map(purchase => `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <img src="${purchase.location}" alt="" class="product-image" role="presentation">
+                                    <div>${purchase.name}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <img src="${purchase.location}" alt="" class="product-image" role="presentation">
+                            </td>
+                            <td>${formatDate(purchase.purchaseDate)}</td>
+                            <td><span class="category-badge">${purchase.category}</span></td>
+                            <td>${purchase.description}</td>
+                            <td class="price">${formatPrice(purchase.price)}</td>
+                            <td>
+                                <button class="actions-menu" aria-label="More actions for ${purchase.name}">⋮</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination" id="pagination-controls" role="navigation" aria-label="Pagination">
+            <button id="prev-page" aria-label="Previous page" disabled>Previous</button>
+            <button id="next-page" aria-label="Next page">Next</button>
+        </div>
+    </main>
+
+    <script>
+        let purchases = [];
+        let currentPage = 1;
+        const itemsPerPage = 5;
+
+        // Format price to currency
+        function formatPrice(price) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(price);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Fetch purchase data from the API
+        async function fetchPurchases() {
+            try {
+                const response = await fetch('https://storage.googleapis.com/marketplace-prod-7728-shop-cdn-e5e2/interview/data.json');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                purchases = data;
+                populateTable();
+                setupPagination();
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                purchases = [];
+            }
+        }
+
+        // Populate table with purchases
+        function populateTable() {
+            const container = document.getElementById('purchases-container');
+            const filteredPurchases = filterPurchases();
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedPurchases = filteredPurchases.slice(startIndex, endIndex);
+            
+            container.innerHTML = `
+                <!-- Mobile Cards View -->
+                <div class="mobile-view" role="region" aria-label="Purchases list">
+                    ${paginatedPurchases.map(purchase => `
+                        <article class="purchase-card">
+                            <div class="purchase-header">
+                                <div class="purchase-title">
+                                    <img src="${purchase.location}" alt="" class="product-image" role="presentation">
+                                    <span class="purchase-name">${purchase.name}</span>
+                                </div>
+                                <div class="purchase-price" aria-label="Price: ${formatPrice(purchase.price)}">${formatPrice(purchase.price)}</div>
+                            </div>
+                            <div class="purchase-description">${purchase.description}</div>
+                            <div class="purchase-date-label">Purchase Date</div>
+                            <div class="purchase-date" aria-label="Purchased on ${formatDate(purchase.purchaseDate)}">${formatDate(purchase.purchaseDate)}</div>
+                        </article>
+                    `).join('')}
+                </div>
+
+                <!-- Desktop Table View -->
+                <table class="desktop-view purchases-table" role="table" aria-label="Purchases history">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Purchase Date</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Price</th>
+                            <th scope="col" aria-label="Actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${paginatedPurchases.map(purchase => `
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <img src="${purchase.location}" alt="" class="product-image" role="presentation">
+                                        <div>${purchase.name}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <img src="${purchase.location}" alt="" class="product-image" role="presentation">
+                                </td>
+                                <td>${formatDate(purchase.purchaseDate)}</td>
+                                <td><span class="category-badge">${purchase.category}</span></td>
+                                <td>${purchase.description}</td>
+                                <td class="price">${formatPrice(purchase.price)}</td>
+                                <td>
+                                    <button class="actions-menu" aria-label="More actions for ${purchase.name}">⋮</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            updatePaginationControls(filteredPurchases.length);
+        }
+
+        // Filter purchases based on search input
+        function filterPurchases() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            return purchases.filter(purchase => 
+                purchase.name.toLowerCase().includes(searchInput) || 
+                purchase.description.toLowerCase().includes(searchInput)
+            );
+        }
+
+        // Setup pagination controls
+        function setupPagination() {
+            document.getElementById('search-input').addEventListener('input', () => {
+                currentPage = 1; // Reset to first page on search
+                populateTable();
+            });
+
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    populateTable();
+                }
+            });
+
+            document.getElementById('next-page').addEventListener('click', () => {
+                currentPage++;
+                populateTable();
+            });
+        }
+
+        // Update pagination controls
+        function updatePaginationControls(totalItems) {
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage >= totalPages;
+        }
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            const isExpanded = navLinks.classList.contains('active');
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+        });
+
+        // Initialize the table
+        fetchPurchases();
+
+        // Add window resize listener to handle view changes
+        window.addEventListener('resize', populateTable);
+    </script>
+</body>
+</html>
